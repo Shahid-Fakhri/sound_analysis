@@ -10,7 +10,7 @@ import '../providers/patient_provider.dart';
 class EditPatientRecordScreen extends StatefulWidget {
   static const routeName = '/edit-record';
 
-  const EditPatientRecordScreen({Key? key}) : super(key: key);
+  const EditPatientRecordScreen({Key key}) : super(key: key);
 
   @override
   State<EditPatientRecordScreen> createState() =>
@@ -38,12 +38,12 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
   };
   bool _isInit = true;
   bool _isLoading = false;
-  String? isSelectAge;
+  String isSelectAge;
 
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final productId = ModalRoute.of(context)?.settings.arguments as String;
+      final productId = ModalRoute.of(context).settings.arguments as String;
       _editPatient = Provider.of<PatientProvider>(context, listen: false)
           .findById(productId);
       _initialValues = {
@@ -60,11 +60,11 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
   }
 
   void _saveForm() {
-    final isValid = _formKey.currentState!.validate();
+    final isValid = _formKey.currentState.validate();
     if (!isValid) {
       return;
     }
-    _formKey.currentState!.save();
+    _formKey.currentState.save();
     setState(() {
       _isLoading = true;
     });
@@ -111,7 +111,7 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
       }
       setState(() {
         isSelectAge = DateFormat.yMd().format(age);
-        _initialValues['age'] = isSelectAge!;
+        _initialValues['age'] = isSelectAge;
       });
     });
   }
@@ -163,7 +163,7 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
             onSaved: (value) {
               _editPatient = Patient(
                 id: _editPatient.id,
-                patientName: value!,
+                patientName: value,
                 email: _editPatient.email,
                 cnic: _editPatient.cnic,
                 age: _editPatient.age,
@@ -178,7 +178,7 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
           TextFormField(
             initialValue: _initialValues['email'],
             validator: (value) {
-              if (value!.endsWith('.com') && value.contains('@')) {
+              if (value.endsWith('.com') && value.contains('@')) {
                 return null;
               }
               return 'Enter valid email.';
@@ -191,7 +191,7 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
               _editPatient = Patient(
                 id: _editPatient.id,
                 patientName: _editPatient.patientName,
-                email: value!,
+                email: value,
                 cnic: _editPatient.cnic,
                 age: _editPatient.age,
                 gender: _editPatient.gender,
@@ -205,7 +205,7 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
           TextFormField(
             initialValue: _initialValues['cnic'],
             validator: (value) {
-              if (value!.length != 15 || !value.contains('-')) {
+              if (value.length != 15 || !value.contains('-')) {
                 return 'Please enter correct CNIC eg 17302-7654398-9';
               }
               return null;
@@ -219,7 +219,7 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
                 id: _editPatient.id,
                 patientName: _editPatient.patientName,
                 email: _editPatient.email,
-                cnic: value!,
+                cnic: value,
                 age: _editPatient.age,
                 gender: _editPatient.gender,
                 phone: _editPatient.phone,
@@ -249,7 +249,7 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
                 cnic: _editPatient.cnic,
                 age: _editPatient.age,
                 gender: _editPatient.gender,
-                phone: value!,
+                phone: value,
               );
             },
           ),

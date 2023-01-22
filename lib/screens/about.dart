@@ -6,7 +6,7 @@ import '../providers/user_provider.dart';
 class AboutScreen extends StatefulWidget {
   static const routeName = '/about';
 
-  const AboutScreen({Key? key}) : super(key: key);
+  const AboutScreen({Key key}) : super(key: key);
 
   @override
   State<AboutScreen> createState() => _AboutScreenState();
@@ -52,9 +52,12 @@ class _AboutScreenState extends State<AboutScreen> {
                 ),
               ),
             ),
-            ElevatedButton(onPressed: (){
-              authPro.logout();
-            }, child: const Text('Logout'), ),
+            ElevatedButton(
+              onPressed: () {
+                authPro.logout();
+              },
+              child: const Text('Logout'),
+            ),
           ],
         ),
       ),

@@ -7,26 +7,26 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth with ChangeNotifier {
-  String? _token;
-  DateTime? _expiryTime;
-  String? _userId;
-  Timer? _authTimer;
-  String? userName;
+  String _token;
+  DateTime _expiryTime;
+  String _userId;
+  Timer _authTimer;
+  String userName;
 
   bool get isAuth {
     return _token != null;
   }
 
-  String? get getToken {
+  String get getToken {
     if (_expiryTime != null &&
-        _expiryTime!.isAfter(DateTime.now()) &&
+        _expiryTime.isAfter(DateTime.now()) &&
         _token != null) {
-      return _token!;
+      return _token;
     }
     return null;
   }
 
-  String? get userId => _userId;
+  String get userId => _userId;
 
   Future<void> _authenticate(
     String email,
@@ -61,7 +61,7 @@ class Auth with ChangeNotifier {
       final userData = json.encode({
         'token': _token,
         'userId': _userId,
-        'expiryDate': _expiryTime!.toIso8601String(),
+        'expiryDate': _expiryTime.toIso8601String(),
       });
       smallStorage.setString('userData', userData);
     } catch (error) {
@@ -108,8 +108,8 @@ class Auth with ChangeNotifier {
     if (!smallStorage.containsKey('userData')) {
       return false;
     }
-    final extractData = json.decode(smallStorage.getString('userData')!)
-        as Map<String, dynamic>;
+    final extractData =
+        json.decode(smallStorage.getString('userData')) as Map<String, dynamic>;
 
     final expiryDate = DateTime.parse(extractData['expiryDate'] as String);
     if (expiryDate.isBefore(DateTime.now())) {
@@ -128,7 +128,7 @@ class Auth with ChangeNotifier {
     _userId = null;
     _expiryTime = null;
     if (_authTimer != null) {
-      _authTimer!.cancel();
+      _authTimer.cancel();
       _authTimer = null;
     }
     notifyListeners();
@@ -139,9 +139,9 @@ class Auth with ChangeNotifier {
 
   void _autoLogout() {
     if (_authTimer != null) {
-      _authTimer!.cancel();
+      _authTimer.cancel();
     }
-    final timeToExpiry = _expiryTime?.difference(DateTime.now()).inSeconds;
-    _authTimer = Timer(Duration(seconds: timeToExpiry!), logout);
+    final timeToExpiry = _expiryTime.difference(DateTime.now()).inSeconds;
+    _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
   }
 }

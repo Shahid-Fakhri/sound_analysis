@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import './screens/home_screen.dart';
-import './screens/about.dart';
-import './screens/patient_screen.dart';
+import '../screens/home_screen.dart';
+import '../screens/patient_screen.dart';
+import '../screens/about.dart';
 
 class BottomNavigationBarScreen extends StatefulWidget {
   static const routeName = '/bottomNavigationBar';
-  const BottomNavigationBarScreen({Key? key}) : super(key: key);
+  const BottomNavigationBarScreen({Key key}) : super(key: key);
 
   @override
   State<BottomNavigationBarScreen> createState() =>

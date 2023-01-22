@@ -7,7 +7,7 @@ import 'package:sound_analysis/models/patient.dart';
 import '../providers/patient_provider.dart';
 
 class PatientFormScreen extends StatefulWidget {
-  const PatientFormScreen({Key? key}) : super(key: key);
+  const PatientFormScreen({Key key}) : super(key: key);
   static const routeName = '/patient-form';
 
   @override
@@ -16,7 +16,7 @@ class PatientFormScreen extends StatefulWidget {
 
 class _PatientFormScreenState extends State<PatientFormScreen> {
   bool isSignUp = false;
-  String? _selectAge;
+  String _selectAge;
   final _formKey = GlobalKey<FormState>();
   Map<String, String> _authData = {
     'patientName': '',
@@ -30,7 +30,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
   void _submit() {
     final patientProvider =
         Provider.of<PatientProvider>(context, listen: false);
-    if (!_formKey.currentState!.validate()) {
+    if (!_formKey.currentState.validate()) {
       return;
     }
     _formKey.currentState?.save();
@@ -39,12 +39,12 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
     });
     Patient newPatient = Patient(
         id: DateTime.now().toString(),
-        patientName: _authData['patientName']!,
-        email: _authData['email']!,
-        cnic: _authData['cnic']!,
-        age: _authData['age']!,
-        gender: _authData['gender']!,
-        phone: _authData['phone']!);
+        patientName: _authData['patientName'],
+        email: _authData['email'],
+        cnic: _authData['cnic'],
+        age: _authData['age'],
+        gender: _authData['gender'],
+        phone: _authData['phone']);
     try {
       patientProvider.addPatient(newPatient);
       Navigator.of(context).pop();
@@ -86,7 +86,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
       }
       setState(() {
         _selectAge = DateFormat.yMd().format(age);
-        _authData['age'] = _selectAge!;
+        _authData['age'] = _selectAge;
       });
     });
   }
@@ -109,7 +109,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
             ),
             onSaved: (value) {
               setState(() {
-                _authData['patientName'] = value!;
+                _authData['patientName'] = value;
               });
             },
           ),
@@ -118,7 +118,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
           ),
           TextFormField(
             validator: (value) {
-              if (value!.endsWith('.com') && value.contains('@')) {
+              if (value.endsWith('.com') && value.contains('@')) {
                 return null;
               }
               return 'Enter valid email.';
@@ -129,7 +129,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
             ),
             onSaved: (value) {
               setState(() {
-                _authData['email'] = value!;
+                _authData['email'] = value;
               });
             },
           ),
@@ -138,7 +138,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
           ),
           TextFormField(
             validator: (value) {
-              if (value!.length != 15 || !value.contains('-')) {
+              if (value.length != 15 || !value.contains('-')) {
                 return 'Please enter correct CNIC eg 17302-7654398-9';
               }
               return null;
@@ -149,7 +149,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
             ),
             onSaved: (value) {
               setState(() {
-                _authData['cnic'] = value!;
+                _authData['cnic'] = value;
               });
             },
           ),
@@ -169,7 +169,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
             ),
             onSaved: (value) {
               setState(() {
-                _authData['phone'] = value!;
+                _authData['phone'] = value;
               });
             },
           ),

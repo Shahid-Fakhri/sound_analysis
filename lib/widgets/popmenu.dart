@@ -7,7 +7,7 @@ import '../screens/edit_patient_record_screen.dart';
 class PopMenu extends StatelessWidget {
   final String id;
 
-  const PopMenu(this.id, {Key? key}) : super(key: key);
+  const PopMenu(this.id, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

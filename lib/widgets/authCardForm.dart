@@ -6,7 +6,7 @@ import '../screens/login_signup.dart';
 import '../providers/user_provider.dart';
 
 class AuthCard extends StatefulWidget {
-  const AuthCard({Key? key}) : super(key: key);
+  const AuthCard({Key key}) : super(key: key);
 
   @override
   _AuthCardState createState() => _AuthCardState();
@@ -51,7 +51,7 @@ class _AuthCardState extends State<AuthCard>
 
   Future<void> _submitSignUp() async {
     final auth = Provider.of<Auth>(context, listen: false);
-    if (!_formKey.currentState!.validate()) {
+    if (!_formKey.currentState.validate()) {
       return;
     }
     _formKey.currentState?.save();
@@ -60,7 +60,7 @@ class _AuthCardState extends State<AuthCard>
     });
     try {
       await auth
-          .signup(_authDataSignUp['email']!, _authDataSignUp['password']!)
+          .signup(_authDataSignUp['email'], _authDataSignUp['password'])
           .then((_) async {
         await auth.addUserData(_authDataSignUp);
       });
@@ -73,16 +73,16 @@ class _AuthCardState extends State<AuthCard>
   }
 
   Future<void> _submitLogin() async {
-    if (!_formKey.currentState!.validate()) {
+    if (!_formKey.currentState.validate()) {
       return;
     }
-    _formKey.currentState!.save();
+    _formKey.currentState.save();
     setState(() {
       isLogin = true;
     });
     try {
       await Provider.of<Auth>(context, listen: false)
-          .login(_authData['email']!, _authData['password']!);
+          .login(_authData['email'], _authData['password']);
     } catch (error) {
       _showErrorDialog(error.toString());
     }
@@ -152,7 +152,7 @@ class _AuthCardState extends State<AuthCard>
             ),
             onSaved: (value) {
               setState(() {
-                _authDataSignUp['userName'] = value!;
+                _authDataSignUp['userName'] = value;
               });
             },
           ),
@@ -162,7 +162,7 @@ class _AuthCardState extends State<AuthCard>
           TextFormField(
             validator: (value) {
               if (Provider.of<Auth>(context, listen: false)
-                  .isValidEmail(value!)) {
+                  .isValidEmail(value)) {
                 return null;
               } else {
                 return 'Enter valid email.';
@@ -174,7 +174,7 @@ class _AuthCardState extends State<AuthCard>
             ),
             onSaved: (value) {
               setState(() {
-                _authDataSignUp['email'] = value!;
+                _authDataSignUp['email'] = value;
               });
             },
           ),
@@ -184,7 +184,7 @@ class _AuthCardState extends State<AuthCard>
           TextFormField(
             controller: passwordController,
             validator: (value) {
-              if (value!.length < 7 || value.isEmpty) {
+              if (value.length < 7 || value.isEmpty) {
                 return 'Please enter correct password';
               }
               return null;
@@ -214,7 +214,7 @@ class _AuthCardState extends State<AuthCard>
             validator: (value) {
               if (value != passwordController.text) {
                 return 'Password does not match.';
-              } else if (value!.isEmpty) {
+              } else if (value.isEmpty) {
                 return 'Please enter password';
               }
               return null;
@@ -240,7 +240,7 @@ class _AuthCardState extends State<AuthCard>
             obscureText: isHideConfirmPass == true ? true : false,
             onSaved: (value) {
               setState(() {
-                _authDataSignUp['password'] = value!;
+                _authDataSignUp['password'] = value;
               });
             },
           ),
@@ -271,7 +271,7 @@ class _AuthCardState extends State<AuthCard>
             ),
             validator: (value) {
               if (Provider.of<Auth>(context, listen: false)
-                  .isValidEmail(value!)) {
+                  .isValidEmail(value)) {
                 return null;
               } else {
                 return 'Enter valid email.';
@@ -279,7 +279,7 @@ class _AuthCardState extends State<AuthCard>
             },
             onSaved: (value) {
               setState(() {
-                _authData['email'] = value!;
+                _authData['email'] = value;
               });
             },
           ),
@@ -305,7 +305,7 @@ class _AuthCardState extends State<AuthCard>
             ),
             obscureText: isHidePass == true ? true : false,
             validator: (value) {
-              if (value!.length >= 7 && value.isNotEmpty) {
+              if (value.length >= 7 && value.isNotEmpty) {
                 return null;
               } else {
                 return 'Enter valid email.';
@@ -313,7 +313,7 @@ class _AuthCardState extends State<AuthCard>
             },
             onSaved: (value) {
               setState(() {
-                _authData['password'] = value!;
+                _authData['password'] = value;
               });
             },
           ),

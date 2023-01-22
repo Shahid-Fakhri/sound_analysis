@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/user_provider.dart';
+
 class AppDrawer extends StatelessWidget {
   const AppDrawer({
-    Key? key,
+    Key key,
   }) : super(key: key);
 
   @override
@@ -16,7 +17,7 @@ class AppDrawer extends StatelessWidget {
       elevation: 5,
       backgroundColor: Colors.black87,
       child: Container(
-        padding:const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

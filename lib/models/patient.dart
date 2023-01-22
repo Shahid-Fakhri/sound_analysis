@@ -7,14 +7,13 @@ class Patient {
   final String phone;
   final String gender;
 
-
   Patient({
-    required this.id,
-    required this.patientName,
-    required this.email,
-    required this.cnic,
-    required this.age,
-    required this.gender,
-    required this.phone,
+    this.id,
+    this.patientName,
+    this.email,
+    this.cnic,
+    this.age,
+    this.gender,
+    this.phone,
   });
 }

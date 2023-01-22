@@ -7,7 +7,7 @@ import 'patient_detail_screen.dart';
 import '../widgets/popmenu.dart';
 
 class PatientScreen extends StatefulWidget {
-  const PatientScreen({Key? key}) : super(key: key);
+  const PatientScreen({Key key}) : super(key: key);
   static const routeName = '/patient';
 
   @override
@@ -17,7 +17,9 @@ class PatientScreen extends StatefulWidget {
 class _PatientScreenState extends State<PatientScreen> {
   @override
   Widget build(BuildContext context) {
-    final patientProvider = Provider.of<PatientProvider>(context,);
+    final patientProvider = Provider.of<PatientProvider>(
+      context,
+    );
     return Scaffold(
       appBar: AppBar(
         title: const Text('Patient'),
@@ -40,7 +42,8 @@ class _PatientScreenState extends State<PatientScreen> {
               onTap: () {
                 Navigator.of(context).pushNamed(
                   PatientDetailScreen.routeName,
-                  arguments: patientProvider.getPatient[item].id,);
+                  arguments: patientProvider.getPatient[item].id,
+                );
               },
               title: Text(patientProvider.getPatient[item].patientName),
               trailing: PopMenu(patientProvider.getPatient[item].id),

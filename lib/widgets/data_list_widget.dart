@@ -6,7 +6,7 @@ import '../providers/patient_provider.dart';
 class DataList extends StatelessWidget {
   final String id;
 
-  const DataList(this.id, {Key? key}) : super(key: key);
+  const DataList(this.id, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

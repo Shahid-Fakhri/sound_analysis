@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import './screens/login_signup.dart';
-import './bottom_navigation_bar.dart';
+import 'widgets/bottom_navigation_bar.dart';
 import './providers/user_provider.dart';
 import './providers/patient_provider.dart';
 import './screens/patient_form_screen.dart';
@@ -14,13 +14,14 @@ import './screens/about.dart';
 import './screens/edit_patient_record_screen.dart';
 import './screens/recording_screen.dart';
 import './screens/patient_detail_screen.dart';
+import './recording_data/sound_recorder.dart';
 
 void main() => runApp(
       MyApp(),
     );
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
             AddRecordingScreen.routeName: (ctx) => const AddRecordingScreen(),
             EditPatientRecordScreen.routeName: (ctx) =>
                 const EditPatientRecordScreen(),
+            SoundRecorderScreen.routeName: (ctx) => SoundRecorderScreen(),
           },
         ),
       ),
