@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../screens/home_screen.dart';
 import '../screens/patient_screen.dart';
 import '../screens/about.dart';
+import '../services/database.dart';
 
 class BottomNavigationBarScreen extends StatefulWidget {
   static const routeName = '/bottomNavigationBar';
@@ -13,6 +14,7 @@ class BottomNavigationBarScreen extends StatefulWidget {
 }
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
+  DatabaseHelper dbHelper = DatabaseHelper();
   int _currentIndex = 0;
   final List<Widget> _pages = [
     const MyHomePage(),
@@ -24,6 +26,12 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     setState(() {
       _currentIndex = pageNum;
     });
+  }
+
+  @override
+  void dispose() {
+    dbHelper.close();
+    super.dispose();
   }
 
   @override

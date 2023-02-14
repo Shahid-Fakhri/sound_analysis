@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,13 +12,18 @@ import './screens/patient_screen.dart';
 import './screens/home_screen.dart';
 import './screens/about.dart';
 import './screens/edit_patient_record_screen.dart';
-import './screens/recording_screen.dart';
 import './screens/patient_detail_screen.dart';
 import './recording_data/sound_recorder.dart';
+import './services/database.dart' as db;
 
-void main() => runApp(
-      MyApp(),
-    );
+db.DatabaseHelper dbHelper = db.DatabaseHelper();
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // dbHelper.deleteDatabase();
+  print('main.......');
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key key}) : super(key: key);
@@ -31,7 +36,7 @@ class MyApp extends StatelessWidget {
           value: Auth(),
         ),
         ChangeNotifierProvider.value(
-          value: PatientProvider(),
+          value: DatabaseHelper(),
         )
       ],
       child: Consumer<Auth>(
@@ -60,7 +65,6 @@ class MyApp extends StatelessWidget {
             PatientScreen.routeName: (ctx) => const PatientScreen(),
             PatientFormScreen.routeName: (ctx) => const PatientFormScreen(),
             PatientDetailScreen.routeName: (ctx) => const PatientDetailScreen(),
-            AddRecordingScreen.routeName: (ctx) => const AddRecordingScreen(),
             EditPatientRecordScreen.routeName: (ctx) =>
                 const EditPatientRecordScreen(),
             SoundRecorderScreen.routeName: (ctx) => SoundRecorderScreen(),

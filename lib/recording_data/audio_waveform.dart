@@ -54,7 +54,7 @@ class DemoPainter extends CustomPainter {
 
     var verticalLine = Paint()
       ..color = Colors.blue
-      ..strokeWidth = 1.5;
+      ..strokeWidth = 1.0;
 
     for (double i = 0; i < audioData.length; i++) {
       canvas.drawLine(Offset(0 + (i * 3), center.height),

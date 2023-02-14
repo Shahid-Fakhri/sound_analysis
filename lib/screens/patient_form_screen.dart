@@ -1,10 +1,7 @@
-// ignore_for_file: prefer_final_fields
+// ignore_for_file: prefer_final_fields, use_build_context_synchronously, avoid_print
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:sound_analysis/models/patient.dart';
-
-import '../providers/patient_provider.dart';
+import '../services/database.dart';
 
 class PatientFormScreen extends StatefulWidget {
   const PatientFormScreen({Key key}) : super(key: key);
@@ -15,11 +12,13 @@ class PatientFormScreen extends StatefulWidget {
 }
 
 class _PatientFormScreenState extends State<PatientFormScreen> {
+  DatabaseHelper dbHelper = DatabaseHelper();
   bool isSignUp = false;
   String _selectAge;
   final _formKey = GlobalKey<FormState>();
-  Map<String, String> _authData = {
-    'patientName': '',
+  Map<String, String> patientData = {
+    'id': DateTime.now().toString(),
+    'name': '',
     'email': '',
     'cnic': '',
     'age': '',
@@ -27,9 +26,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
     'gender': '',
   };
 
-  void _submit() {
-    final patientProvider =
-        Provider.of<PatientProvider>(context, listen: false);
+  void _submit() async {
     if (!_formKey.currentState.validate()) {
       return;
     }
@@ -37,17 +34,9 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
     setState(() {
       isSignUp = true;
     });
-    Patient newPatient = Patient(
-        id: DateTime.now().toString(),
-        patientName: _authData['patientName'],
-        email: _authData['email'],
-        cnic: _authData['cnic'],
-        age: _authData['age'],
-        gender: _authData['gender'],
-        phone: _authData['phone']);
     try {
-      patientProvider.addPatient(newPatient);
-      Navigator.of(context).pop();
+      final id = await dbHelper.insertData(patientData);
+      Navigator.of(context).pop(id);
     } catch (error) {
       _showErrorDialog(error.toString());
     }
@@ -86,7 +75,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
       }
       setState(() {
         _selectAge = DateFormat.yMd().format(age);
-        _authData['age'] = _selectAge;
+        patientData['age'] = _selectAge;
       });
     });
   }
@@ -109,7 +98,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
             ),
             onSaved: (value) {
               setState(() {
-                _authData['patientName'] = value;
+                patientData['name'] = value;
               });
             },
           ),
@@ -129,7 +118,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
             ),
             onSaved: (value) {
               setState(() {
-                _authData['email'] = value;
+                patientData['email'] = value;
               });
             },
           ),
@@ -149,7 +138,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
             ),
             onSaved: (value) {
               setState(() {
-                _authData['cnic'] = value;
+                patientData['cnic'] = value;
               });
             },
           ),
@@ -169,7 +158,7 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
             ),
             onSaved: (value) {
               setState(() {
-                _authData['phone'] = value;
+                patientData['phone'] = value;
               });
             },
           ),
@@ -188,9 +177,9 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  _authData['age'] == null
+                  patientData['age'] == null
                       ? 'No age chosen yet'
-                      : 'Age: ${_authData["age"]}',
+                      : 'Age: ${patientData["age"]}',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 TextButton(
@@ -207,20 +196,20 @@ class _PatientFormScreenState extends State<PatientFormScreen> {
             children: [
               RadioListTile(
                 value: 'male',
-                groupValue: _authData['gender'],
+                groupValue: patientData['gender'],
                 onChanged: (value) {
                   setState(() {
-                    _authData['gender'] = value.toString();
+                    patientData['gender'] = value.toString();
                   });
                 },
                 title: const Text('Male'),
               ),
               RadioListTile(
                   value: 'female',
-                  groupValue: _authData['gender'],
+                  groupValue: patientData['gender'],
                   onChanged: (value) {
                     setState(() {
-                      _authData['gender'] = value.toString();
+                      patientData['gender'] = value.toString();
                     });
                   },
                   title: const Text('Female')),

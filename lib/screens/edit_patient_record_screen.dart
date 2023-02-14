@@ -1,11 +1,8 @@
 // ignore_for_file: prefer_final_fields, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:sound_analysis/models/patient.dart';
-
-import '../providers/patient_provider.dart';
+import 'package:sound_analysis/providers/patient_provider.dart';
 
 class EditPatientRecordScreen extends StatefulWidget {
   static const routeName = '/edit-record';
@@ -18,42 +15,49 @@ class EditPatientRecordScreen extends StatefulWidget {
 }
 
 class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
+  DatabaseHelper dbHelper = DatabaseHelper();
   final _formKey = GlobalKey<FormState>();
-  var _editPatient = Patient(
-    id: '',
-    patientName: '',
-    email: '',
-    cnic: '',
-    age: '',
-    gender: '',
-    phone: '',
-  );
-  var _initialValues = {
-    'patientName': '',
+  List<Map<String, dynamic>> data;
+  bool _isInit = true;
+  bool _isLoading = false;
+  String isSelectAge;
+  Map<String, String> _editPatient = {
+    'id': '',
+    'name': '',
     'email': '',
     'cnic': '',
     'age': '',
     'gender': '',
     'phone': '',
   };
-  bool _isInit = true;
-  bool _isLoading = false;
-  String isSelectAge;
+
+  void getPatient(String id) async {
+    data = await dbHelper.fetchData(id);
+    if (data != null) {
+      setState(() {
+        _editPatient['id'] = data[0]['id'];
+        _editPatient['name'] = data[0]['name'];
+        _editPatient['email'] = data[0]['email'];
+        _editPatient['phone'] = data[0]['phone'];
+        _editPatient['age'] = data[0]['age'];
+        _editPatient['gender'] = data[0]['gender'];
+        _editPatient['cnic'] = data[0]['cnic'];
+      });
+    }
+  }
+
+  void updateRecord(Map<String, String> record) async {
+    if (record['id'] == null) {
+      await dbHelper.insertData(record);
+    }
+    await dbHelper.updateRecord(record);
+  }
 
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final productId = ModalRoute.of(context).settings.arguments as String;
-      _editPatient = Provider.of<PatientProvider>(context, listen: false)
-          .findById(productId);
-      _initialValues = {
-        'patientName': _editPatient.patientName,
-        'email': _editPatient.email,
-        'cnic': _editPatient.cnic,
-        'age': _editPatient.age,
-        'gender': _editPatient.gender,
-        'phone': _editPatient.phone,
-      };
+      final id = ModalRoute.of(context).settings.arguments as String;
+      getPatient(id);
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -65,16 +69,15 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
       return;
     }
     _formKey.currentState.save();
+
     setState(() {
       _isLoading = true;
     });
-    if (_editPatient.id != null) {
-      Provider.of<PatientProvider>(context, listen: false)
-          .updatePatient(_editPatient.id, _editPatient);
+    if (data[0]['id'] != null) {
+      updateRecord(_editPatient);
     } else {
       try {
-        Provider.of<PatientProvider>(context, listen: false)
-            .addPatient(_editPatient);
+        updateRecord(_editPatient);
       } catch (error) {
         showDialog(
           context: context,
@@ -99,21 +102,19 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
     Navigator.of(context).pop();
   }
 
-  void _pickedAge() {
-    showDatePicker(
+  void _pickedAge() async {
+    final DateTime pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime(1960),
       firstDate: DateTime(1960),
       lastDate: DateTime.now(),
-    ).then((age) {
-      if (age == null) {
-        return;
-      }
+    );
+    if (pickedDate != null && (pickedDate.toString() != data[0]['age'])) {
       setState(() {
-        isSelectAge = DateFormat.yMd().format(age);
-        _initialValues['age'] = isSelectAge;
+        isSelectAge = DateFormat.yMd().format(pickedDate);
+        _editPatient['age'] = isSelectAge;
       });
-    });
+    }
   }
 
   @override
@@ -129,7 +130,7 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
         ],
       ),
       body: Container(
-        child: _isLoading
+        child: _isLoading || data == null
             ? const Center(
                 child: CircularProgressIndicator(),
               )
@@ -149,7 +150,7 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
       child: Column(
         children: [
           TextFormField(
-            initialValue: _initialValues['patientName'],
+            initialValue: data[0]['name'],
             validator: (value) {
               if (value == '') {
                 return 'Please enter your name,';
@@ -161,22 +162,22 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
               border: OutlineInputBorder(),
             ),
             onSaved: (value) {
-              _editPatient = Patient(
-                id: _editPatient.id,
-                patientName: value,
-                email: _editPatient.email,
-                cnic: _editPatient.cnic,
-                age: _editPatient.age,
-                gender: _editPatient.gender,
-                phone: _editPatient.phone,
-              );
+              _editPatient = {
+                'id': _editPatient['id'],
+                'name': value,
+                'email': _editPatient['email'],
+                'cnic': _editPatient['cnic'],
+                'age': _editPatient['age'],
+                'gender': _editPatient['gender'],
+                'phone': _editPatient['phone'],
+              };
             },
           ),
           const SizedBox(
             height: 10,
           ),
           TextFormField(
-            initialValue: _initialValues['email'],
+            initialValue: data[0]['email'],
             validator: (value) {
               if (value.endsWith('.com') && value.contains('@')) {
                 return null;
@@ -188,22 +189,22 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
               border: OutlineInputBorder(),
             ),
             onSaved: (value) {
-              _editPatient = Patient(
-                id: _editPatient.id,
-                patientName: _editPatient.patientName,
-                email: value,
-                cnic: _editPatient.cnic,
-                age: _editPatient.age,
-                gender: _editPatient.gender,
-                phone: _editPatient.phone,
-              );
+              _editPatient = {
+                'id': _editPatient['id'],
+                'name': _editPatient['name'],
+                'email': value,
+                'cnic': _editPatient['cnic'],
+                'age': _editPatient['age'],
+                'gender': _editPatient['gender'],
+                'phone': _editPatient['phone'],
+              };
             },
           ),
           const SizedBox(
             height: 10,
           ),
           TextFormField(
-            initialValue: _initialValues['cnic'],
+            initialValue: data[0]['cnic'],
             validator: (value) {
               if (value.length != 15 || !value.contains('-')) {
                 return 'Please enter correct CNIC eg 17302-7654398-9';
@@ -215,22 +216,22 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
               border: OutlineInputBorder(),
             ),
             onSaved: (value) {
-              _editPatient = Patient(
-                id: _editPatient.id,
-                patientName: _editPatient.patientName,
-                email: _editPatient.email,
-                cnic: value,
-                age: _editPatient.age,
-                gender: _editPatient.gender,
-                phone: _editPatient.phone,
-              );
+              _editPatient = {
+                'id': _editPatient['id'],
+                'name': _editPatient['name'],
+                'email': _editPatient['email'],
+                'cnic': value,
+                'age': _editPatient['age'],
+                'gender': _editPatient['gender'],
+                'phone': _editPatient['phone'],
+              };
             },
           ),
           const SizedBox(
             height: 10,
           ),
           TextFormField(
-            initialValue: _initialValues['phone'],
+            initialValue: data[0]['phone'],
             validator: (value) {
               if (value == '') {
                 return 'Invalid Number';
@@ -242,15 +243,15 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
               border: OutlineInputBorder(),
             ),
             onSaved: (value) {
-              _editPatient = Patient(
-                id: _editPatient.id,
-                patientName: _editPatient.patientName,
-                email: _editPatient.email,
-                cnic: _editPatient.cnic,
-                age: _editPatient.age,
-                gender: _editPatient.gender,
-                phone: value,
-              );
+              _editPatient = {
+                'id': _editPatient['id'],
+                'name': _editPatient['name'],
+                'email': _editPatient['email'],
+                'cnic': _editPatient['cnic'],
+                'age': _editPatient['age'],
+                'gender': _editPatient['gender'],
+                'phone': value,
+              };
             },
           ),
           const SizedBox(
@@ -268,7 +269,7 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  'Age: ${_initialValues["age"]}',
+                  'Age: ${_editPatient["age"]}',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 TextButton(
@@ -284,37 +285,37 @@ class _EditPatientRecordScreenState extends State<EditPatientRecordScreen> {
           Column(
             children: [
               RadioListTile(
-                value: 'Male',
-                groupValue: _initialValues['gender'],
+                value: 'male',
+                groupValue: data[0]['gender'],
                 onChanged: (value) {
                   setState(() {
-                    _editPatient = Patient(
-                      id: _editPatient.id,
-                      patientName: _editPatient.patientName,
-                      email: _editPatient.email,
-                      cnic: _editPatient.cnic,
-                      age: _editPatient.age,
-                      gender: value.toString(),
-                      phone: _editPatient.phone,
-                    );
+                    _editPatient = {
+                      'id': _editPatient['id'],
+                      'name': _editPatient['name'],
+                      'email': _editPatient['email'],
+                      'cnic': _editPatient['cnic'],
+                      'age': _editPatient['age'],
+                      'gender': value.toString(),
+                      'phone': _editPatient['phone'],
+                    };
                   });
                 },
                 title: const Text('Male'),
               ),
               RadioListTile(
-                  value: 'Female',
-                  groupValue: _initialValues['gender'],
+                  value: 'female',
+                  groupValue: data[0]['gender'],
                   onChanged: (value) {
                     setState(() {
-                      _editPatient = Patient(
-                        id: _editPatient.id,
-                        patientName: _editPatient.patientName,
-                        email: _editPatient.email,
-                        cnic: _editPatient.cnic,
-                        age: _editPatient.age,
-                        gender: value.toString(),
-                        phone: _editPatient.phone,
-                      );
+                      _editPatient = {
+                        'id': _editPatient['id'],
+                        'name': _editPatient['name'],
+                        'email': _editPatient['email'],
+                        'cnic': _editPatient['cnic'],
+                        'age': _editPatient['age'],
+                        'gender': value.toString(),
+                        'phone': _editPatient['phone'],
+                      };
                     });
                   },
                   title: const Text('Female')),

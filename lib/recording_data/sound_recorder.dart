@@ -1,23 +1,28 @@
-// ignore_for_file: avoid_print, import_of_legacy_library_into_null_safe, prefer_const_constructors, duplicate_ignore, prefer_const_constructors_in_immutables
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import './audio_player.dart';
 import './audio_recorder.dart';
+import '../services/database.dart';
 
 class SoundRecorderScreen extends StatefulWidget {
   static const routeName = '/sound-recorder';
-
-  SoundRecorderScreen({Key key}) : super(key: key);
+  const SoundRecorderScreen({Key key}) : super(key: key);
 
   @override
   State<SoundRecorderScreen> createState() => _SoundRecorderScreenState();
 }
 
 class _SoundRecorderScreenState extends State<SoundRecorderScreen> {
+  DatabaseHelper dbHelper = DatabaseHelper();
   bool showPlayer = false;
   String audioPath;
+  String id;
+  @override
+  void didChangeDependencies() {
+    id = ModalRoute.of(context).settings.arguments;
+    super.didChangeDependencies();
+  }
 
   @override
   void initState() {
@@ -27,37 +32,31 @@ class _SoundRecorderScreenState extends State<SoundRecorderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('building main: showPlayer status: $showPlayer');
-    return MaterialApp(
-      title: 'Audio Recorder',
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Audio Recording'),
-        ),
-        body: SafeArea(
-          child: Center(
-            child: showPlayer
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: AudioPlayer(
-                      source: audioPath,
-                      onDelete: () {
-                        setState(() => showPlayer = false);
-                      },
-                    ),
-                  )
-                : AudioRecorder(
-                    onStop: (path) {
-                      if (kDebugMode) print('Recorded file path: $path');
-                      setState(() {
-                        audioPath = path;
-                        showPlayer = true;
-                      });
-                    },
-                  ),
-          ),
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Audio Recording'),
+      ),
+      body: SafeArea(
+        child: showPlayer
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: AudioPlayer(
+                  id,
+                  audioPath,
+                  () {
+                    setState(() => showPlayer = false);
+                  },
+                ),
+              )
+            : AudioRecorder(
+                onStop: (path) {
+                  if (kDebugMode) print('Recorded file path: $path');
+                  setState(() {
+                    audioPath = path;
+                    showPlayer = true;
+                  });
+                },
+              ),
       ),
     );
   }

@@ -1,12 +1,11 @@
 class Patient {
-  final String id;
-  final String patientName;
-  final String email;
-  final String cnic;
-  final String age;
-  final String phone;
-  final String gender;
-
+  String id;
+  String patientName;
+  String email;
+  String cnic;
+  String age;
+  String phone;
+  String gender;
   Patient({
     this.id,
     this.patientName,
@@ -16,4 +15,14 @@ class Patient {
     this.gender,
     this.phone,
   });
+
+  Patient.fromMapObject(Map<String, dynamic> map) {
+    id = map['id'];
+    patientName = map['name'];
+    email = map['email'];
+    cnic = map['cnic'];
+    phone = map['phone'];
+    age = map['age'];
+    gender = map['gender'];
+  }
 }

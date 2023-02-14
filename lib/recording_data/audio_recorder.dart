@@ -31,7 +31,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
     });
 
     _amplitudeSub = _audioRecorder
-        .onAmplitudeChanged(const Duration(milliseconds: 200))
+        .onAmplitudeChanged(const Duration(milliseconds: 300))
         .listen((amp) => setState(() {
               _amplitude = amp;
             }));
@@ -40,7 +40,6 @@ class _AudioRecorderState extends State<AudioRecorder> {
   }
 
   Future<void> _start() async {
-    print('recording start');
     try {
       if (await _audioRecorder.hasPermission()) {
         final isSupported = await _audioRecorder.isEncoderSupported(
@@ -62,7 +61,6 @@ class _AudioRecorderState extends State<AudioRecorder> {
   }
 
   Future<void> _stop() async {
-    print('recording stops');
     _timer?.cancel();
     _recordDuration = 0;
 
@@ -74,61 +72,52 @@ class _AudioRecorderState extends State<AudioRecorder> {
   }
 
   Future<void> _pause() async {
-    print('recording pause');
     _timer?.cancel();
     await _audioRecorder.pause();
   }
 
   Future<void> _resume() async {
-    print('recording resume');
     _startTimer();
     await _audioRecorder.resume();
   }
 
   @override
   Widget build(BuildContext context) {
-    print('Build running again');
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        if (_amplitude != null) ...[
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 150, horizontal: 2),
+            height: 200,
+            width: double.infinity,
+            color: Colors.black,
+            child: SingleChildScrollView(
+              reverse: true,
+              scrollDirection: Axis.horizontal,
+              child: AudioWaveForm(
+                  amplitude: (_amplitude != null) &&
+                          (_amplitude.current != double.infinity) &&
+                          (_amplitude.current != double.negativeInfinity)
+                      ? _amplitude.current.roundToDouble()
+                      : 0.0),
+            ),
+          ),
+        ],
+        Column(
           children: [
-            if (_amplitude != null) ...[
-              Container(
-                margin:
-                    const EdgeInsets.symmetric(vertical: 150, horizontal: 2),
-                height: 200,
-                width: double.infinity,
-                color: Colors.black,
-                child: SingleChildScrollView(
-                  reverse: true,
-                  scrollDirection: Axis.horizontal,
-                  child: AudioWaveForm(
-                      amplitude: (_amplitude != null) &&
-                              (_amplitude.current != double.infinity) &&
-                              (_amplitude.current != double.negativeInfinity)
-                          ? _amplitude.current.roundToDouble()
-                          : 0.0),
-                ),
-              ),
-            ],
-            Column(
-              children: [
-                _buildText(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    _buildRecordStopControl(),
-                    const SizedBox(width: 20),
-                    _buildPauseResumeControl(),
-                  ],
-                ),
+            _buildText(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                _buildRecordStopControl(),
+                const SizedBox(width: 20),
+                _buildPauseResumeControl(),
               ],
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 

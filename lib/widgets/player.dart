@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, must_be_immutable, use_build_context_synchronously
+// ignore_for_file: use_key_in_widget_constructors, must_be_immutable, use_build_context_synchronously, prefer_typing_uninitialized_variables
 
 import 'dart:async';
 import 'dart:io';
@@ -8,18 +8,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../services/database.dart';
 
-class AudioPlayer extends StatefulWidget {
-  final String id;
-  final String source;
-  VoidCallback onDelete;
-
-  AudioPlayer(this.id, this.source, [this.onDelete]);
+class Player extends StatefulWidget {
+  final id;
+  final source;
+  final VoidCallback reBuild;
+  const Player({this.source, this.id, this.reBuild});
 
   @override
-  AudioPlayerState createState() => AudioPlayerState();
+  PlayerState createState() => PlayerState();
 }
 
-class AudioPlayerState extends State<AudioPlayer> {
+class PlayerState extends State<Player> {
   static const double _controlSize = 56;
   static const double _deleteBtnSize = 24;
   DatabaseHelper dbHelper = DatabaseHelper();
@@ -61,61 +60,38 @@ class AudioPlayerState extends State<AudioPlayer> {
     super.dispose();
   }
 
-  void insert(String id, String file) async {
-    final data = {
-      'audioId': DateTime.now().toString(),
-      'id': id,
-      'file': file,
-    };
-    final result = await dbHelper.insertAudio(data);
-    if (result != null) {
-      Navigator.of(context).pop(result);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Expanded(
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  _buildControl(),
-                  _buildSlider(constraints.maxWidth),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Color.fromARGB(255, 253, 1, 1),
-                      size: _deleteBtnSize,
-                    ),
-                    onPressed: () async {
-                      stop().then((value) async {
-                        widget.onDelete();
-                        try {
-                          await File(widget.source).delete();
-                        } catch (e) {
-                          if (kDebugMode) {
-                            print('Error: $e');
-                          }
-                        }
-                      });
-                    },
-                  ),
-                ],
+        return Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            _buildControl(),
+            _buildSlider(constraints.maxWidth),
+            IconButton(
+              icon: const Icon(
+                Icons.delete,
+                color: Color.fromARGB(255, 253, 1, 1),
+                size: _deleteBtnSize,
               ),
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => insert(widget.id, widget.source),
-                icon: const Icon(Icons.save),
-                label: const Text('SAVE'),
-              ),
+              onPressed: () async {
+                stop().then((value) {
+                  try {
+                    File(widget.source).delete().then((value) async {
+                      final res = await dbHelper.deleteAudio(widget.id);
+                      if (res != 0) {
+                        widget.reBuild();
+                      }
+                    });
+                  } catch (e) {
+                    if (kDebugMode) {
+                      print('Error: $e');
+                    }
+                  }
+                });
+              },
             ),
           ],
         );

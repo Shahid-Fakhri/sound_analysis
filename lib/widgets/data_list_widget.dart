@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/patient_provider.dart';
 
 class DataList extends StatelessWidget {
-  final String id;
-
-  const DataList(this.id, {Key key}) : super(key: key);
+  final List<Map<String, dynamic>> patientDetail;
+  const DataList(this.patientDetail, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final allPatients = Provider.of<PatientProvider>(context).getPatient;
-    final patient = allPatients.firstWhere((element) => element.id == id);
     return SizedBox(
       height: 360,
       width: double.infinity,
@@ -32,7 +26,7 @@ class DataList extends StatelessWidget {
                     fontSize: 20),
               ),
               trailing: Text(
-                patient.patientName,
+                patientDetail[0]['name'],
                 style: const TextStyle(color: Colors.black, fontSize: 20),
               ),
             ),
@@ -45,7 +39,7 @@ class DataList extends StatelessWidget {
                     fontSize: 20),
               ),
               trailing: Text(
-                patient.email,
+                patientDetail[0]['email'],
                 style: const TextStyle(color: Colors.black, fontSize: 20),
               ),
             ),
@@ -58,7 +52,7 @@ class DataList extends StatelessWidget {
                     fontSize: 20),
               ),
               trailing: Text(
-                patient.cnic,
+                patientDetail[0]['cnic'],
                 style: const TextStyle(color: Colors.black, fontSize: 20),
               ),
             ),
@@ -71,7 +65,7 @@ class DataList extends StatelessWidget {
                     fontSize: 20),
               ),
               trailing: Text(
-                patient.phone,
+                patientDetail[0]['phone'],
                 style: const TextStyle(color: Colors.black, fontSize: 20),
               ),
             ),
@@ -84,7 +78,7 @@ class DataList extends StatelessWidget {
                     fontSize: 20),
               ),
               trailing: Text(
-                patient.age,
+                patientDetail[0]['age'],
                 style: const TextStyle(color: Colors.black, fontSize: 20),
               ),
             ),
@@ -97,7 +91,7 @@ class DataList extends StatelessWidget {
                     fontSize: 20),
               ),
               trailing: Text(
-                patient.gender,
+                patientDetail[0]['gender'],
                 style: const TextStyle(color: Colors.black, fontSize: 20),
               ),
             ),
