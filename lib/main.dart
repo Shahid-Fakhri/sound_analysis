@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import './screens/login_signup.dart';
 import 'widgets/bottom_navigation_bar.dart';
 import './providers/user_provider.dart';
-import './providers/patient_provider.dart';
 import './screens/patient_form_screen.dart';
 import './screens/patient_screen.dart';
 import './screens/home_screen.dart';
@@ -14,9 +13,9 @@ import './screens/about.dart';
 import './screens/edit_patient_record_screen.dart';
 import './screens/patient_detail_screen.dart';
 import './recording_data/sound_recorder.dart';
-import './services/database.dart' as db;
+// import './services/database.dart' as db;
 
-db.DatabaseHelper dbHelper = db.DatabaseHelper();
+// db.DatabaseHelper dbHelper = db.DatabaseHelper();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,9 +34,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: Auth(),
         ),
-        ChangeNotifierProvider.value(
-          value: DatabaseHelper(),
-        )
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(

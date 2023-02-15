@@ -53,19 +53,6 @@ class DatabaseHelper {
     print('creating tables.....');
   }
 
-  Future<int> insertAudio(Map<String, String> audio) async {
-    Database db = await database;
-    final result = await db.insert(audioTableName, audio,
-        conflictAlgorithm: ConflictAlgorithm.ignore);
-    return result;
-  }
-
-  Future<List<Map<String, dynamic>>> fetchAudio(String id) async {
-    Database db = await database;
-    final data = await db.query(audioTableName, where: 'id=?', whereArgs: [id]);
-    return data;
-  }
-
   Future<void> deleteTable() async {
     Database db = await database;
     final result = await db.delete(audioTableName);
@@ -103,18 +90,23 @@ class DatabaseHelper {
     return result;
   }
 
+  Future<int> insertAudio(Map<String, String> audio) async {
+    Database db = await database;
+    final result = await db.insert(audioTableName, audio,
+        conflictAlgorithm: ConflictAlgorithm.ignore);
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> fetchAudio(String id) async {
+    Database db = await database;
+    final data = await db.query(audioTableName, where: 'id=?', whereArgs: [id]);
+    return data;
+  }
+
   Future<int> deleteAudio(String id) async {
     Database db = await database;
     final result =
         await db.delete(audioTableName, where: 'audioId=?', whereArgs: [id]);
-    return result;
-  }
-
-  Future<int> getCount() async {
-    Database db = await database;
-    List<Map<String, dynamic>> counted =
-        await db.rawQuery('SELECT COUNT (*) FROM $tableName');
-    final result = Sqflite.firstIntValue(counted);
     return result;
   }
 
@@ -126,6 +118,4 @@ class DatabaseHelper {
   void close() async {
     await _database.close();
   }
-
-  Future<void> deleteFile(String file) async {}
 }

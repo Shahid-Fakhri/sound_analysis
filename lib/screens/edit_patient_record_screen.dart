@@ -2,7 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sound_analysis/providers/patient_provider.dart';
+// import '../providers/patient_provider.dart';
+import '../services/database.dart';
 
 class EditPatientRecordScreen extends StatefulWidget {
   static const routeName = '/edit-record';

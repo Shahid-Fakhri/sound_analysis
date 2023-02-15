@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../providers/patient_provider.dart';
 import '../screens/edit_patient_record_screen.dart';
+import '../services/database.dart' as db;
 
 class PopMenu extends StatefulWidget {
   final String patientId;
@@ -14,11 +12,14 @@ class PopMenu extends StatefulWidget {
 }
 
 class _PopMenuState extends State<PopMenu> {
+  db.DatabaseHelper dbHelper = db.DatabaseHelper();
   bool isLoading = false;
 
-  void removePatient(BuildContext context) async {
-    await Provider.of<DatabaseHelper>(context, listen: false)
-        .deleteRecord(widget.patientId);
+  void removePatient() async {
+    final res = await dbHelper.deleteRecord(widget.patientId);
+    if (res != 0) {
+      setState(() {});
+    }
   }
 
   @override
@@ -27,7 +28,7 @@ class _PopMenuState extends State<PopMenu> {
       icon: const Icon(Icons.more_vert),
       onSelected: (value) {
         if (value == 'Delete') {
-          removePatient(context);
+          removePatient();
         } else {
           Navigator.of(context).pushNamed(EditPatientRecordScreen.routeName,
               arguments: widget.patientId);
