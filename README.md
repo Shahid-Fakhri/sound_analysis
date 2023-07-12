@@ -22,11 +22,11 @@ The Sound Analysis App, built using Flutter, allows users to record and analyze 
 ## Installation
 1. Clone the repository:
 ```
-git clone https://github.com/Shahid-Fakhri/mealapp.git
+git clone https://github.com/Shahid-Fakhri/sound_analysis.git
 ```
 2. Navigate to the project directory:
 ```
-cd mealapp
+cd sound_analysis
 ```
 3. Install the dependencies:
 ```
